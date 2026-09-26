@@ -1,6 +1,7 @@
 'use client'
 
 import useSWR from 'swr'
+import type { GisOverview, LiveEmergency } from '@/lib/gis/types'
 import type { GeoPoint, HazardProfile, ResourceResult, UserProfile } from '@/lib/types'
 
 async function postJson<T>(url: string, body: unknown): Promise<T> {
@@ -32,9 +33,26 @@ export function useResources(point: GeoPoint | null | undefined) {
   })
 }
 
+export function useGisOverview(point: GeoPoint | null | undefined) {
+  const key = point ? ['gis-overview', point.lat, point.lon] : null
+  return useSWR<GisOverview>(key, () => postJson('/api/gis/overview', { lat: point!.lat, lon: point!.lon }), {
+    revalidateOnFocus: false,
+    dedupingInterval: 5 * 60_000,
+  })
+}
+
+export function useLiveEmergency(point: GeoPoint | null | undefined) {
+  const key = point ? ['live', point.lat.toFixed(2), point.lon.toFixed(2)] : null
+  return useSWR<LiveEmergency>(key, () => postJson('/api/live', { lat: point!.lat, lon: point!.lon }), {
+    refreshInterval: 5 * 60_000,
+    revalidateOnFocus: true,
+  })
+}
+
 export type GeocodeResponse =
   | { status: 'ok'; lat: number; lon: number; address: string; isEstimate?: boolean }
-  | { status: 'ambiguous' | 'not-found' | 'outside-city' | 'invalid' | 'unavailable' }
+  | { status: 'ambiguous'; candidates?: Array<{ address: string; lat: number; lon: number }> }
+  | { status: 'not-found' | 'outside-city' | 'invalid' | 'unavailable' | 'not-configured' }
 
 export async function geocodeAddress(address: string): Promise<GeocodeResponse> {
   const res = await fetch('/api/geocode', {

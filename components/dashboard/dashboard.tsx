@@ -3,6 +3,7 @@
 import { ArrowRight, MapPinOff, RotateCw, ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
 import { DemoBadge, InfoNote, OfficialAlerts } from '@/components/common/bits'
+import { EmergencyPanel } from '@/components/emergency/emergency-panel'
 import { ResourceCard } from '@/components/help/resource-card'
 import { HazardCard } from '@/components/hazards/hazard-card'
 import { CourseCard } from '@/components/learn/course-card'
@@ -219,6 +220,7 @@ export function Dashboard() {
       </div>
       <div className="mx-auto flex max-w-6xl flex-col gap-14 px-5 py-10">
         <ImportantForYou profile={profile} />
+        <EmergencyPanel profile={profile} />
         <LearnPreview profile={profile} />
         <HelpPreview profile={profile} />
         <TrainingPreview />

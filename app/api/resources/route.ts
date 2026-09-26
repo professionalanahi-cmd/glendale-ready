@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import { demoResources } from '@/lib/server/demo-gis'
 import { isGisConfigured, liveResources } from '@/lib/server/gis-mcp'
 import { parseCoords } from '@/lib/server/validate'
 import type { ResourceCategory, ResourceResult } from '@/lib/types'
@@ -20,23 +19,22 @@ export async function POST(request: Request) {
   const coords = parseCoords(body)
   if (!coords) return NextResponse.json({ error: 'A valid location is required.' }, { status: 400 })
 
-  if (!isGisConfigured()) {
-    const result: ResourceResult = {
-      mode: 'demo',
-      status: 'ok',
-      resources: demoResources(coords.lat, coords.lon),
-      notConnected: NOT_CONNECTED,
-    }
-    return NextResponse.json(result)
-  }
+  const empty = (message: string): ResourceResult => ({
+    mode: 'live',
+    status: 'unavailable',
+    resources: [],
+    notConnected: NOT_CONNECTED,
+    message,
+  })
+
+  if (!isGisConfigured()) return NextResponse.json(empty('not-configured'))
 
   try {
     const resources = await liveResources(coords.lat, coords.lon)
     const result: ResourceResult = { mode: 'live', status: 'ok', resources, notConnected: NOT_CONNECTED }
     return NextResponse.json(result)
   } catch (error) {
-    console.error('[glendale-ready] resource lookup failed', error)
-    const result: ResourceResult = { mode: 'live', status: 'unavailable', resources: [], notConnected: NOT_CONNECTED }
-    return NextResponse.json(result)
+    console.error('[glendale-ready] resource lookup failed:', (error as Error).message)
+    return NextResponse.json(empty('service-unavailable'))
   }
 }

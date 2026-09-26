@@ -1,19 +1,26 @@
 import { NextResponse } from 'next/server'
 import { buildHazardProfile } from '@/lib/hazards/meta'
-import { demoHazardsAt } from '@/lib/server/demo-gis'
 import { isGisConfigured, liveHazardsAt } from '@/lib/server/gis-mcp'
 import { parseCoords, type Coords } from '@/lib/server/validate'
 import type { LocationHazardResult } from '@/lib/types'
 
+const unavailable = (message: string): LocationHazardResult => ({
+  mode: 'live',
+  status: 'unavailable',
+  findings: [],
+  message,
+  fetchedAt: new Date().toISOString(),
+})
+
 async function lookup(coords: Coords | null): Promise<LocationHazardResult | null> {
   if (!coords) return null
-  if (!isGisConfigured()) return demoHazardsAt(coords.lat, coords.lon)
+  // No demo fallback: a missing source must never look like "not in a zone".
+  if (!isGisConfigured()) return unavailable('not-configured')
   try {
     return await liveHazardsAt(coords)
   } catch (error) {
-    console.error('[glendale-ready] hazard lookup failed', error)
-    // Never fall back to demo data here: a missing source must not look like "not in zone".
-    return { mode: 'live', status: 'unavailable', findings: [], message: 'service-unavailable', fetchedAt: new Date().toISOString() }
+    console.error('[glendale-ready] hazard lookup failed:', (error as Error).message)
+    return unavailable('service-unavailable')
   }
 }
 
@@ -24,7 +31,6 @@ export async function POST(request: Request) {
   if (!home && !current) return NextResponse.json({ error: 'A valid location is required.' }, { status: 400 })
 
   const sameSpot = home && current && Math.abs(home.lat - current.lat) < 1e-5 && Math.abs(home.lon - current.lon) < 1e-5
-  const homeResult = await lookup(home)
-  const currentResult = sameSpot ? homeResult : await lookup(current)
-  return NextResponse.json(buildHazardProfile(homeResult, currentResult))
+  const [homeResult, currentResult] = await Promise.all([lookup(home), sameSpot ? null : lookup(current)])
+  return NextResponse.json(buildHazardProfile(homeResult, sameSpot ? homeResult : currentResult))
 }

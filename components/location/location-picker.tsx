@@ -92,6 +92,10 @@ export function LocationPicker({
       setAddress('')
     } else if (res.status === 'ambiguous') {
       setStatus({ tone: 'error', key: 'location.ambiguous' })
+    } else if (res.status === 'outside-city') {
+      setStatus({ tone: 'error', key: 'location.outsideCity' })
+    } else if (res.status === 'not-configured' || res.status === 'unavailable') {
+      setStatus({ tone: 'error', key: 'location.gisOffline' })
     } else {
       setStatus({ tone: 'error', key: 'location.geocodeFailed' })
     }
