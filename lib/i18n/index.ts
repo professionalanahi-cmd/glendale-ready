@@ -1,17 +1,22 @@
 import type { Locale, LocalizedText } from '@/lib/types'
 import en from './en'
 import es from './es'
+import hy from './hy'
 
 /**
- * To add a language (e.g. Armenian), create `hy.ts` typed as `Dictionary`,
+ * To add a language, create `<code>.ts` typed as `Dictionary`,
  * register it here, and add the code to `Locale` and SUPPORTED_LOCALES.
  */
-export const dictionaries = { en, es } as const
+export const dictionaries = { en, es, hy } as const
 
 export const localeNames: Record<Locale, string> = {
   en: 'English',
   es: 'Español',
+  hy: 'Հայերեն',
 }
+
+/** BCP 47 tags for Intl date/number formatting. */
+export const intlTag: Record<Locale, string> = { en: 'en-US', es: 'es-US', hy: 'hy-AM' }
 
 type Vars = Record<string, string | number>
 
@@ -37,4 +42,4 @@ export function pick(text: LocalizedText, locale: Locale): string {
   return text[locale] || text.en
 }
 
-export const speechLang: Record<Locale, string> = { en: 'en-US', es: 'es-US' }
+export const speechLang: Record<Locale, string> = intlTag

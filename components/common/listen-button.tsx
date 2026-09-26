@@ -6,15 +6,26 @@ import { usePreferences } from '@/components/providers/preferences-provider'
 import { speechLang } from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 
-const subscribeNoop = () => () => {}
+function subscribeVoices(onChange: () => void) {
+  if (!('speechSynthesis' in window)) return () => {}
+  window.speechSynthesis.addEventListener('voiceschanged', onChange)
+  return () => window.speechSynthesis.removeEventListener('voiceschanged', onChange)
+}
 
-/** Reads text aloud with the browser's built-in speech. Hidden when unsupported. */
+/** Many devices have no voice for some languages (e.g. Armenian); a mismatched voice mispronounces the text. */
+function hasVoiceFor(lang: string) {
+  if (!('speechSynthesis' in window)) return false
+  const prefix = lang.split('-')[0].toLowerCase()
+  return window.speechSynthesis.getVoices().some((v) => v.lang.toLowerCase().startsWith(prefix))
+}
+
+/** Reads text aloud with the browser's built-in speech. Hidden when no matching voice is available. */
 export function ListenButton({ text, label, className }: { text: string; label?: string; className?: string }) {
   const { t, locale } = usePreferences()
   const [speaking, setSpeaking] = useState(false)
   const supported = useSyncExternalStore(
-    subscribeNoop,
-    () => 'speechSynthesis' in window,
+    subscribeVoices,
+    () => hasVoiceFor(speechLang[locale]),
     () => false,
   )
 

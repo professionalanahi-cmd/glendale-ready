@@ -5,6 +5,7 @@ import { useRef, useState } from 'react'
 import { PageHeader, SourceNote } from '@/components/common/bits'
 import { usePreferences } from '@/components/providers/preferences-provider'
 import { alarmSounds } from '@/lib/content/catalog'
+import { pick } from '@/lib/i18n'
 import type { AlarmSound } from '@/lib/types'
 import { card } from '@/lib/ui'
 import { cn } from '@/lib/utils'
@@ -14,7 +15,7 @@ function SoundCard({ sound }: { sound: AlarmSound }) {
   const audioRef = useRef<HTMLAudioElement>(null)
   const [playing, setPlaying] = useState(false)
   const [failed, setFailed] = useState(false)
-  const name = sound.name[locale]
+  const name = pick(sound.name, locale)
 
   function toggle() {
     const el = audioRef.current
@@ -68,12 +69,12 @@ function SoundCard({ sound }: { sound: AlarmSound }) {
       <dl className="flex flex-col gap-3">
         <div className="flex flex-col gap-0.5">
           <dt className="font-bold">{t('sounds.meaning')}</dt>
-          <dd className="leading-relaxed text-pretty">{sound.meaning?.[locale] ?? t('sounds.meaningComingSoon')}</dd>
+          <dd className="leading-relaxed text-pretty">{(sound.meaning && pick(sound.meaning, locale)) ?? t('sounds.meaningComingSoon')}</dd>
         </div>
         {sound.whenHeard ? (
           <div className="flex flex-col gap-0.5">
             <dt className="font-bold">{t('sounds.whenHeard')}</dt>
-            <dd className="leading-relaxed text-pretty">{sound.whenHeard[locale]}</dd>
+            <dd className="leading-relaxed text-pretty">{pick(sound.whenHeard, locale)}</dd>
           </div>
         ) : null}
       </dl>

@@ -4,6 +4,7 @@ import { Clock } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePreferences } from '@/components/providers/preferences-provider'
+import { pick } from '@/lib/i18n'
 import type { Course } from '@/lib/types'
 import { card } from '@/lib/ui'
 import { cn } from '@/lib/utils'
@@ -25,10 +26,10 @@ export function CourseCard({ course, compact = false }: { course: Course; compac
         <p className="text-sm font-bold text-primary">{t(`topics.${course.topic}`)}</p>
         <h3 className="font-heading text-xl font-extrabold text-balance">
           <Link href={`/learn/${course.id}`} className="after:absolute after:inset-0 hover:underline">
-            {course.title[locale]}
+            {pick(course.title, locale)}
           </Link>
         </h3>
-        {!compact ? <p className="leading-relaxed text-pretty text-muted-foreground">{course.description[locale]}</p> : null}
+        {!compact ? <p className="leading-relaxed text-pretty text-muted-foreground">{pick(course.description, locale)}</p> : null}
         <p className="mt-auto flex items-center gap-2 pt-2 text-sm font-bold">
           <Clock aria-hidden="true" className="size-4" />
           {t('common.minutes', { n: course.durationMinutes })}

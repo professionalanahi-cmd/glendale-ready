@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { SourceNote } from '@/components/common/bits'
 import { ListenButton } from '@/components/common/listen-button'
 import { usePreferences } from '@/components/providers/preferences-provider'
+import { intlTag, pick } from '@/lib/i18n'
 import type { Course, LocalizedText } from '@/lib/types'
 import { card } from '@/lib/ui'
 import { cn } from '@/lib/utils'
@@ -13,7 +14,7 @@ import { cn } from '@/lib/utils'
 function Steps({ id, title, items }: { id: string; title: string; items: LocalizedText[] }) {
   const { t, locale } = usePreferences()
   if (!items.length) return null
-  const text = [title, ...items.map((i) => i[locale])].join('. ')
+  const text = [title, ...items.map((i) => pick(i, locale))].join('. ')
   return (
     <section aria-labelledby={id} className={cn(card, 'flex flex-col gap-4 p-6')}>
       <div className="flex flex-wrap items-center justify-between gap-3">
@@ -26,7 +27,7 @@ function Steps({ id, title, items }: { id: string; title: string; items: Localiz
         {items.map((i) => (
           <li key={i.en} className="flex items-start gap-3 text-lg leading-relaxed">
             <CheckCircle2 aria-hidden="true" className="mt-1.5 size-5 shrink-0 text-primary" />
-            {i[locale]}
+            {pick(i, locale)}
           </li>
         ))}
       </ul>
@@ -36,7 +37,7 @@ function Steps({ id, title, items }: { id: string; title: string; items: Localiz
 
 export function CourseDetail({ course }: { course: Course }) {
   const { t, locale } = usePreferences()
-  const fmt = (d: string) => new Date(d).toLocaleDateString(locale === 'es' ? 'es-US' : 'en-US', { dateStyle: 'long' })
+  const fmt = (d: string) => new Date(d).toLocaleDateString(intlTag[locale], { dateStyle: 'long' })
   const hasContent = course.before.length + course.during.length + course.after.length > 0
 
   return (
@@ -48,8 +49,8 @@ export function CourseDetail({ course }: { course: Course }) {
 
       <header className="flex flex-col gap-3">
         <p className="text-sm font-bold tracking-wide text-primary uppercase">{t(`topics.${course.topic}`)}</p>
-        <h1 className="font-heading text-4xl font-extrabold text-balance">{course.title[locale]}</h1>
-        <p className="text-xl leading-relaxed text-pretty">{course.description[locale]}</p>
+        <h1 className="font-heading text-4xl font-extrabold text-balance">{pick(course.title, locale)}</h1>
+        <p className="text-xl leading-relaxed text-pretty">{pick(course.description, locale)}</p>
         <p className="flex items-center gap-2 text-muted-foreground">
           <Clock aria-hidden="true" className="size-4" />
           {t('learn.courseLength', { n: course.durationMinutes })}
@@ -88,7 +89,7 @@ export function CourseDetail({ course }: { course: Course }) {
           </h2>
           <ul className="flex list-disc flex-col gap-2 pl-6 text-lg leading-relaxed">
             {course.learn.map((l) => (
-              <li key={l.en}>{l[locale]}</li>
+              <li key={l.en}>{pick(l, locale)}</li>
             ))}
           </ul>
         </section>

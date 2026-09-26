@@ -1,5 +1,6 @@
-export type Locale = 'en' | 'es'
-export type LocalizedText = Record<Locale, string>
+export type Locale = 'en' | 'es' | 'hy'
+/** English is the fallback when a translation is missing. */
+export type LocalizedText = { en: string } & Partial<Record<Exclude<Locale, 'en'>, string>>
 
 export type HazardCategory = 'earthquake' | 'wildfire' | 'flood' | 'dam-inundation' | 'debris-flow'
 export type TopicCategory = HazardCategory | 'general' | 'pets' | 'evacuation' | 'supplies'

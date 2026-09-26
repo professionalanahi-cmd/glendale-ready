@@ -3,6 +3,7 @@
 import { CalendarPlus, MapPin } from 'lucide-react'
 import { DemoBadge, ExternalA, SourceNote } from '@/components/common/bits'
 import { usePreferences } from '@/components/providers/preferences-provider'
+import { intlTag, pick } from '@/lib/i18n'
 import type { Locale, TrainingEvent } from '@/lib/types'
 import { card } from '@/lib/ui'
 import { cn } from '@/lib/utils'
@@ -12,9 +13,9 @@ const gcalDate = (iso: string) => new Date(iso).toISOString().replace(/[-:]/g, '
 export function googleCalendarUrl(event: TrainingEvent, locale: Locale) {
   const params = new URLSearchParams({
     action: 'TEMPLATE',
-    text: event.title[locale],
+    text: pick(event.title, locale),
     dates: `${gcalDate(event.start)}/${gcalDate(event.end)}`,
-    details: event.description[locale],
+    details: pick(event.description, locale),
     location: event.location,
   })
   return `https://calendar.google.com/calendar/render?${params.toString()}`
@@ -23,7 +24,7 @@ export function googleCalendarUrl(event: TrainingEvent, locale: Locale) {
 export function EventCard({ event, compact = false }: { event: TrainingEvent; compact?: boolean }) {
   const { t, locale } = usePreferences()
   const start = new Date(event.start)
-  const tag = locale === 'es' ? 'es-US' : 'en-US'
+  const tag = intlTag[locale]
   const month = start.toLocaleDateString(tag, { month: 'short' })
   const day = start.toLocaleDateString(tag, { day: 'numeric' })
   const when = `${start.toLocaleDateString(tag, { weekday: 'long', month: 'long', day: 'numeric' })}, ${start.toLocaleTimeString(tag, { hour: 'numeric', minute: '2-digit' })} – ${new Date(event.end).toLocaleTimeString(tag, { hour: 'numeric', minute: '2-digit' })}`
@@ -37,7 +38,7 @@ export function EventCard({ event, compact = false }: { event: TrainingEvent; co
         </div>
         <div className="flex min-w-0 flex-col gap-1">
           <p className="text-sm font-bold text-primary">{t(`topics.${event.category}`)}</p>
-          <h3 className="font-heading text-xl font-extrabold text-balance">{event.title[locale]}</h3>
+          <h3 className="font-heading text-xl font-extrabold text-balance">{pick(event.title, locale)}</h3>
         </div>
       </div>
       <dl className="flex flex-col gap-1">
@@ -53,7 +54,7 @@ export function EventCard({ event, compact = false }: { event: TrainingEvent; co
           <dd>{event.location}</dd>
         </div>
       </dl>
-      {!compact ? <p className="leading-relaxed text-pretty text-muted-foreground">{event.description[locale]}</p> : null}
+      {!compact ? <p className="leading-relaxed text-pretty text-muted-foreground">{pick(event.description, locale)}</p> : null}
       {event.isDemo ? (
         <p className="flex flex-wrap items-center gap-2 text-sm">
           <DemoBadge />

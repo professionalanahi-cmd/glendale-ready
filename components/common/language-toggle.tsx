@@ -6,6 +6,8 @@ import { localeNames } from '@/lib/i18n'
 import type { Locale } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
+const shortNames: Record<Locale, string> = { en: 'EN', es: 'ES', hy: 'ՀԱՅ' }
+
 export function LanguageToggle({ className, onInk = false }: { className?: string; onInk?: boolean }) {
   const { locale, setPreference, t } = usePreferences()
   return (
@@ -23,7 +25,7 @@ export function LanguageToggle({ className, onInk = false }: { className?: strin
           aria-pressed={locale === code}
           onClick={() => setPreference('locale', code)}
           className={cn(
-            'min-h-10 rounded-full px-3 text-sm font-bold transition-colors',
+            'min-h-10 min-w-10 rounded-full px-2.5 text-sm font-bold transition-colors sm:px-3',
             locale === code
               ? 'bg-card text-foreground shadow-sm'
               : onInk
@@ -31,7 +33,10 @@ export function LanguageToggle({ className, onInk = false }: { className?: strin
                 : 'text-muted-foreground hover:text-foreground',
           )}
         >
-          {localeNames[code]}
+          <span aria-hidden="true" className="sm:hidden">
+            {shortNames[code]}
+          </span>
+          <span className="sr-only sm:not-sr-only">{localeNames[code]}</span>
         </button>
       ))}
     </div>
