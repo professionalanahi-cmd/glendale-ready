@@ -1,0 +1,160 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: var(--font-atkinson), system-ui, sans-serif;
+  --font-heading: var(--font-nunito), system-ui, sans-serif;
+
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-primary-soft: var(--primary-soft);
+  --color-sun: var(--sun);
+  --color-sun-soft: var(--sun-soft);
+  --color-coral: var(--coral);
+  --color-coral-soft: var(--coral-soft);
+  --color-ink: var(--ink);
+  --color-ink-foreground: var(--ink-foreground);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* Palette: teal (primary), sunflower, coral (urgency only), charcoal ink, soft neutrals */
+:root {
+  color-scheme: light;
+  --background: #f4f6f5;
+  --foreground: #23262b;
+  --card: #ffffff;
+  --card-foreground: #23262b;
+  --popover: #ffffff;
+  --popover-foreground: #23262b;
+  --primary: #1d7564;
+  --primary-foreground: #ffffff;
+  --primary-soft: #dcefe9;
+  --sun: #f4b23e;
+  --sun-soft: #fdf0d5;
+  --coral: #c9472f;
+  --coral-soft: #fbe3dd;
+  --ink: #2b2d31;
+  --ink-foreground: #ffffff;
+  --secondary: #e9eeec;
+  --secondary-foreground: #23262b;
+  --muted: #e9eeec;
+  --muted-foreground: #4d535a;
+  --accent: #fdf0d5;
+  --accent-foreground: #23262b;
+  --destructive: #b33a24;
+  --destructive-foreground: #ffffff;
+  --border: #d9dfdc;
+  --input: #b9c2be;
+  --ring: #1d7564;
+  --radius: 1rem;
+}
+
+html {
+  font-size: 106.25%;
+}
+html[data-text-size='large'] {
+  font-size: 118.75%;
+}
+html[data-text-size='larger'] {
+  font-size: 131.25%;
+}
+
+html[data-contrast='high'] {
+  --background: #ffffff;
+  --foreground: #000000;
+  --card-foreground: #000000;
+  --muted-foreground: #1f2226;
+  --primary: #0d4f42;
+  --primary-soft: #cfe8e0;
+  --coral: #9e2f1b;
+  --border: #2b2d31;
+  --input: #2b2d31;
+  --ring: #000000;
+  --secondary: #e2e6e4;
+  --muted: #e2e6e4;
+}
+
+html[data-motion='reduce'] *,
+html[data-motion='reduce'] *::before,
+html[data-motion='reduce'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans leading-relaxed;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-heading text-balance;
+  }
+  :focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 3px;
+    border-radius: 0.5rem;
+  }
+}
+
+@utility font-heading {
+  font-family: var(--font-heading);
+}
+
+.skip-link {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 100;
+  border-radius: 9999px;
+  background: var(--sun);
+  color: var(--ink);
+  padding: 0.75rem 1.25rem;
+  font-weight: 700;
+}
+.skip-link:focus {
+  top: 1rem;
+}
