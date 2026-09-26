@@ -10,6 +10,7 @@ import { useProfile } from '@/components/providers/auth-provider'
 import { usePreferences } from '@/components/providers/preferences-provider'
 import { getCourse } from '@/lib/content/courses'
 import { useHazards } from '@/lib/hooks'
+import { pick } from '@/lib/i18n'
 import type { Course, HazardCategory, HazardLayerFinding } from '@/lib/types'
 import { card } from '@/lib/ui'
 import { cn } from '@/lib/utils'
@@ -83,7 +84,7 @@ export function HazardDetail({ category }: { category: HazardCategory }) {
   }
 
   const explanation = t(`hazards.explain.${category}`)
-  const readAloud = [name, t(hazardSummaryKey(hazard), { name }), explanation, ...steps.map((s) => s[locale])].join('. ')
+  const readAloud = [name, t(hazardSummaryKey(hazard), { name }), explanation, ...steps.map((s) => pick(s, locale))].join('. ')
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-8 px-5 py-10">
@@ -121,7 +122,7 @@ export function HazardDetail({ category }: { category: HazardCategory }) {
             {steps.map((s) => (
               <li key={s.en} className="flex items-start gap-3 text-lg text-ink">
                 <CheckCircle2 aria-hidden="true" className="mt-1 size-5 shrink-0 text-primary" />
-                {s[locale]}
+                {pick(s, locale)}
               </li>
             ))}
           </ul>

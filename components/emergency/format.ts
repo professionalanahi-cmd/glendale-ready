@@ -1,6 +1,7 @@
+import { intlTag } from '@/lib/i18n'
 import type { Locale } from '@/lib/types'
 
-const tag = (locale: Locale) => (locale === 'es' ? 'es-US' : 'en-US')
+const tag = (locale: Locale) => intlTag[locale]
 
 export function formatMiles(meters: number, locale: Locale) {
   const miles = meters / 1609.344

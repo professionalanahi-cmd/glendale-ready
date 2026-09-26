@@ -1,6 +1,6 @@
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
-import { Atkinson_Hyperlegible, Nunito } from 'next/font/google'
+import { Atkinson_Hyperlegible, Noto_Sans_Armenian, Nunito } from 'next/font/google'
 import { AuthProvider } from '@/components/providers/auth-provider'
 import { PreferencesProvider } from '@/components/providers/preferences-provider'
 import { preferencesBootScript } from '@/lib/display'
@@ -12,6 +12,12 @@ const atkinson = Atkinson_Hyperlegible({
   variable: '--font-atkinson',
 })
 const nunito = Nunito({ subsets: ['latin'], weight: ['600', '700', '800'], variable: '--font-nunito' })
+const armenian = Noto_Sans_Armenian({
+  subsets: ['armenian'],
+  weight: ['400', '700', '800'],
+  variable: '--font-armenian',
+  preload: false,
+})
 
 export const metadata: Metadata = {
   title: {
@@ -19,7 +25,7 @@ export const metadata: Metadata = {
     template: '%s · Glendale Ready',
   },
   description:
-    'Understand the hazards around your Glendale home, learn simple ways to prepare, and find nearby help. Clear, accessible, and in English and Spanish.',
+    'Understand the hazards around your Glendale home, learn simple ways to prepare, and find nearby help. Clear, accessible, and in English, Spanish and Armenian.',
   generator: 'v0.app',
 }
 
@@ -32,7 +38,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${atkinson.variable} ${nunito.variable} bg-background`} suppressHydrationWarning>
+    <html lang="en" className={`${atkinson.variable} ${nunito.variable} ${armenian.variable} bg-background`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: preferencesBootScript }} />
       </head>
