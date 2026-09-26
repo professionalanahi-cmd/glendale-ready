@@ -229,7 +229,7 @@ const es: Dictionary = {
     categoryInfo: 'Información',
     categoryActive: 'Emergencia activa',
     prepareExplainer:
-      'Glendale Ready le ayuda a prepararse. No muestra emergencias en vivo. Para emergencias activas, siga las alertas oficiales.',
+      'Glendale Ready le ayuda a prepararse. Abajo puede ver mapas oficiales de peligros y alertas recientes, pero siempre siga primero las alertas e instrucciones oficiales de emergencia.',
     officialAlerts: 'Dónde recibir alertas oficiales',
   },
   hazards: {

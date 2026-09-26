@@ -73,7 +73,9 @@ function Findings({ findings }: { findings: GisFinding[] }) {
             <p className="font-bold">{f.title}</p>
             <StatusPill status={f.status} />
           </div>
-          {f.status === 'in_zone' && f.zoneLabel ? <p className="leading-relaxed">{f.zoneLabel}</p> : null}
+          {f.status === 'in_zone' && f.zoneLabel && f.zoneLabel !== f.title ? (
+            <p className="leading-relaxed">{f.zoneLabel}</p>
+          ) : null}
           {f.status === 'in_zone' && f.sourceClass && f.sourceClass !== f.zoneLabel ? (
             <p className="text-sm text-muted-foreground">{t('emergency.sourceClass', { value: f.sourceClass })}</p>
           ) : null}
@@ -241,7 +243,7 @@ export function EmergencyPanel({ profile }: { profile: UserProfile }) {
       ) : null}
 
       <div className="grid gap-6 lg:grid-cols-5">
-        <div className={cn(card, 'flex flex-col overflow-hidden lg:col-span-3')}>
+        <div className={cn(card, 'flex flex-col overflow-hidden lg:col-span-3 lg:self-start')}>
           <div role="region" aria-label={t('emergency.mapLabel', { place: point.label })} className="relative z-0 h-80 lg:h-[28rem]">
             {palette ? (
               <GisMap

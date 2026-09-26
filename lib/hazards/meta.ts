@@ -83,7 +83,11 @@ function applicable(findings: HazardLayerFinding[]) {
 function exposureLabel(findings: HazardLayerFinding[]) {
   const inZone = findings.filter((f) => f.status === 'in_zone')
   if (!inZone.length) return undefined
-  return inZone.map((f) => (f.sourceClass ? `${f.datasetTitle}: ${f.sourceClass}` : f.datasetTitle)).join(' · ')
+  return inZone
+    .map((f) =>
+      f.sourceClass && f.sourceClass !== f.datasetTitle ? `${f.datasetTitle}: ${f.sourceClass}` : f.datasetTitle,
+    )
+    .join(' · ')
 }
 
 export function buildHazardProfile(

@@ -228,7 +228,7 @@ const en = {
     categoryInfo: 'Information',
     categoryActive: 'Active emergency',
     prepareExplainer:
-      'Glendale Ready helps you prepare. It does not show live emergencies. For active emergencies, follow official alerts.',
+      'Glendale Ready helps you prepare. Below you can see official hazard maps and recent alerts, but always follow official emergency alerts and instructions first.',
     officialAlerts: 'Where to get official alerts',
   },
   hazards: {
