@@ -163,28 +163,33 @@ export function OnboardingWizard() {
           </p>
         ) : null}
 
-        <div className="sticky bottom-0 -mx-5 flex flex-col-reverse gap-3 border-t border-border bg-background/95 px-5 py-4 backdrop-blur sm:mx-0 sm:flex-row sm:items-center sm:justify-between sm:rounded-full sm:border sm:px-3 sm:py-3">
-          {index > 0 ? (
-            <button type="button" className={btn.ghost} onClick={() => setIndex((i) => i - 1)} disabled={saving}>
-              <ArrowLeft aria-hidden="true" />
-              {t('common.back')}
-            </button>
-          ) : (
-            <span className="hidden sm:block" />
-          )}
-          <div className="flex flex-col-reverse gap-3 sm:flex-row">
+          <div className="sticky bottom-0 -mx-5 grid grid-cols-2 gap-2 border-t border-border bg-background px-5 py-3 sm:mx-0 sm:flex sm:items-center sm:justify-between sm:rounded-full sm:border sm:px-3 sm:py-3">
+            {index > 0 ? (
+              <button type="button" className={btn.ghost} onClick={() => setIndex((i) => i - 1)} disabled={saving}>
+                <ArrowLeft aria-hidden="true" />
+                {t('common.back')}
+              </button>
+            ) : (
+              <span className="hidden sm:block" />
+            )}
             {optional ? (
-              <button type="button" className={btn.ghost} onClick={() => goNext(true)} disabled={saving}>
+              <button
+                type="button"
+                className={cn(btn.ghost, index === 0 && 'col-span-2', 'sm:ml-auto')}
+                onClick={() => goNext(true)}
+                disabled={saving}
+              >
                 {t('common.skip')}
               </button>
             ) : null}
-            <button type="submit" className={cn(step === 'review' ? btn.sun : btn.primary, 'sm:px-10')} disabled={saving}>
-              {saving ? <Loader2 aria-hidden="true" className="animate-spin" /> : null}
-              {saving ? t('common.saving') : step === 'review' ? t('onboarding.finish') : t('common.next')}
-              {!saving ? step === 'review' ? <Check aria-hidden="true" /> : <ArrowRight aria-hidden="true" /> : null}
-            </button>
+            <div className="order-first col-span-2 flex sm:order-last sm:col-span-1">
+              <button type="submit" className={cn(step === 'review' ? btn.sun : btn.primary, 'w-full sm:px-10')} disabled={saving}>
+                {saving ? <Loader2 aria-hidden="true" className="animate-spin" /> : null}
+                {saving ? t('common.saving') : step === 'review' ? t('onboarding.finish') : t('common.next')}
+                {!saving ? step === 'review' ? <Check aria-hidden="true" /> : <ArrowRight aria-hidden="true" /> : null}
+              </button>
+            </div>
           </div>
-        </div>
       </form>
     </Shell>
   )
