@@ -26,6 +26,8 @@
   --color-sun-soft: var(--sun-soft);
   --color-coral: var(--coral);
   --color-coral-soft: var(--coral-soft);
+  --color-fire: var(--fire);
+  --color-zone: var(--zone);
   --color-ink: var(--ink);
   --color-ink-foreground: var(--ink-foreground);
   --color-popover-foreground: var(--popover-foreground);
@@ -59,6 +61,9 @@
   --sun-soft: #fdf0d5;
   --coral: #c9472f;
   --coral-soft: #fbe3dd;
+  /* Map-only: active fire (live feed) vs. mapped hazard zone (static GIS) must never share a color */
+  --fire: #e3140b;
+  --zone: #e8870e;
   --ink: #2b2d31;
   --ink-foreground: #ffffff;
   --secondary: #e9eeec;
@@ -93,6 +98,8 @@ html[data-contrast='high'] {
   --primary: #0d4f42;
   --primary-soft: #cfe8e0;
   --coral: #9e2f1b;
+  --fire: #b80d06;
+  --zone: #b35f00;
   --border: #2b2d31;
   --input: #2b2d31;
   --ring: #000000;

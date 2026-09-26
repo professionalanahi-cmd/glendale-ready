@@ -460,11 +460,32 @@ const en = {
     you: 'You are here',
     legend: {
       you: 'Your location',
-      zone: 'Mapped hazard zone',
+      zone: 'Other mapped hazard zone',
+      wildfireZone: 'Wildfire hazard zone',
+      wildfireZoneDesc: 'mapped area, not a current fire',
       facility: 'Emergency service',
       quake: 'Recent earthquake',
       fire: 'Active wildfire',
+      fireDesc: 'currently reported fire',
     },
+    mapPopup: {
+      wildfireZone:
+        'This is a mapped wildfire hazard classification from City of Glendale GIS. It does not mean a fire is burning here now.',
+      zone: 'This is a mapped hazard classification from City of Glendale GIS. It does not mean an emergency is happening now.',
+      hoverNote: 'Mapped zone, not an active fire',
+      activeFire: 'Active wildfire',
+      status: 'Status',
+      statusUnknown: 'Containment not reported',
+      size: 'Size',
+      location: 'Location',
+      updated: 'Last updated',
+      source: 'Source',
+      notReported: 'Not reported',
+    },
+    legendLabel: 'Map legend',
+    noActiveFiresMap: 'No active wildfires detected in the available data.',
+    firesUnavailableMap:
+      'Live wildfire data is unavailable right now. Mapped hazard zones on this map are not active fires.',
     atLocation: 'At this location',
     context: {
       neighborhood: 'Neighborhood',

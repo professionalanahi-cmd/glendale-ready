@@ -1,6 +1,6 @@
 'use client'
 
-import { MapPinOff, RotateCw } from 'lucide-react'
+import { Flame, MapPinOff, RotateCw } from 'lucide-react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useMemo, useState, useSyncExternalStore } from 'react'
@@ -12,7 +12,7 @@ import type { UserProfile } from '@/lib/types'
 import { btn, card } from '@/lib/ui'
 import { cn } from '@/lib/utils'
 import { formatMiles } from './format'
-import type { MapPalette } from './gis-map'
+import type { MapLabels, MapPalette } from './gis-map'
 import { LiveFeeds } from './live-feeds'
 import { ProvenanceLine } from './provenance'
 
@@ -34,15 +34,16 @@ function usePalette(): MapPalette | null {
     const v = (name: string) => s.getPropertyValue(name).trim()
     return {
       you: v('--primary'),
+      youRing: v('--card'),
       facility: v('--ink'),
       quake: v('--sun'),
-      fire: v('--coral'),
+      activeFire: v('--fire'),
+      wildfireZone: v('--zone'),
       zone: {
         earthquake: v('--sun'),
-        wildfire: v('--coral'),
         flood: v('--primary'),
         'dam-inundation': v('--primary'),
-        'debris-flow': v('--coral'),
+        'debris-flow': v('--muted-foreground'),
       },
     }
   }, [ready])
@@ -51,7 +52,7 @@ function usePalette(): MapPalette | null {
 function StatusPill({ status }: { status: GisFinding['status'] }) {
   const { t } = usePreferences()
   const styles = {
-    in_zone: 'bg-coral text-primary-foreground',
+    in_zone: 'bg-zone text-foreground',
     not_in_zone: 'bg-primary-soft text-foreground',
     unavailable: 'bg-muted text-muted-foreground',
   }[status]
@@ -134,29 +135,71 @@ function Services({ groups }: { groups: GisResourceGroup[] }) {
   )
 }
 
-function Legend({ palette }: { palette: MapPalette }) {
+function Legend({ palette, showOtherZones }: { palette: MapPalette; showOtherZones: boolean }) {
   const { t } = usePreferences()
-  const items = [
-    { color: palette.you, label: t('emergency.legend.you') },
-    { color: palette.zone.wildfire, label: t('emergency.legend.zone'), square: true },
-    { color: palette.facility, label: t('emergency.legend.facility') },
-    { color: palette.quake, label: t('emergency.legend.quake') },
-    { color: palette.fire, label: t('emergency.legend.fire') },
-  ]
   return (
-    <ul aria-hidden="true" className="flex flex-wrap gap-x-4 gap-y-1 px-4 py-3 text-sm">
-      {items.map((i) => (
-        <li key={i.label} className="flex items-center gap-2">
-          <span className={cn('size-3', i.square ? 'rounded-sm' : 'rounded-full')} style={{ backgroundColor: i.color }} />
-          {i.label}
+    <ul aria-label={t('emergency.legendLabel')} className="flex flex-col gap-2 px-4 py-3 text-sm sm:flex-row sm:flex-wrap sm:gap-x-5">
+      <li className="flex items-center gap-2">
+        <span
+          aria-hidden="true"
+          className="flex size-5 shrink-0 items-center justify-center rounded-full bg-fire text-primary-foreground"
+        >
+          <Flame className="size-3" fill="currentColor" />
+        </span>
+        <span>
+          <span className="font-bold">{t('emergency.legend.fire')}</span>
+          <span className="text-muted-foreground">{` — ${t('emergency.legend.fireDesc')}`}</span>
+        </span>
+      </li>
+      <li className="flex items-center gap-2">
+        <span
+          aria-hidden="true"
+          className="size-4 shrink-0 rounded-sm border-2 border-dashed border-zone"
+          style={{ backgroundColor: `color-mix(in srgb, ${palette.wildfireZone} 18%, transparent)` }}
+        />
+        <span>
+          <span className="font-bold">{t('emergency.legend.wildfireZone')}</span>
+          <span className="text-muted-foreground">{` — ${t('emergency.legend.wildfireZoneDesc')}`}</span>
+        </span>
+      </li>
+      <li className="flex items-center gap-2">
+        <span aria-hidden="true" className="size-4 shrink-0 rounded-full border-2 border-card bg-primary shadow-sm" />
+        <span className="font-bold">{t('emergency.legend.you')}</span>
+      </li>
+      {showOtherZones ? (
+        <li className="flex items-center gap-2">
+          <span aria-hidden="true" className="size-4 shrink-0 rounded-sm border-2 border-muted-foreground bg-muted" />
+          {t('emergency.legend.zone')}
         </li>
-      ))}
+      ) : null}
+      <li className="flex items-center gap-2">
+        <span aria-hidden="true" className="size-3 shrink-0 rounded-full" style={{ backgroundColor: palette.facility }} />
+        {t('emergency.legend.facility')}
+      </li>
+      <li className="flex items-center gap-2">
+        <span aria-hidden="true" className="size-3 shrink-0 rounded-full" style={{ backgroundColor: palette.quake }} />
+        {t('emergency.legend.quake')}
+      </li>
     </ul>
   )
 }
 
-export function EmergencyPanel({ profile }: { profile: UserProfile }) {
+function ActiveFireStatus({ live }: { live: ReturnType<typeof useLiveEmergency> }) {
   const { t } = usePreferences()
+  if (live.isLoading || !live.data) return null
+  const feed = live.data.fires
+  const message =
+    feed.status === 'unavailable'
+      ? t('emergency.firesUnavailableMap')
+      : feed.items.length === 0
+        ? t('emergency.noActiveFiresMap')
+        : null
+  if (!message) return null
+  return <p className="border-t border-border px-4 py-3 text-sm leading-relaxed text-muted-foreground">{message}</p>
+}
+
+export function EmergencyPanel({ profile }: { profile: UserProfile }) {
+  const { t, locale } = usePreferences()
   const options = [
     profile.home ? { id: 'home' as const, point: profile.home, label: t('emergency.home') } : null,
     profile.current ? { id: 'current' as const, point: profile.current, label: t('emergency.current') } : null,
@@ -169,6 +212,31 @@ export function EmergencyPanel({ profile }: { profile: UserProfile }) {
   const live = useLiveEmergency(point)
   const palette = usePalette()
   const data = overview.data
+
+  // Static GIS classification vs. live incident feed are kept as separate layers on purpose.
+  const zones = data?.zones ?? []
+  const wildfireHazardZones = zones.filter((z) => z.category === 'wildfire')
+  const otherHazardZones = zones.filter((z) => z.category !== 'wildfire')
+  const activeWildfires = live.data?.fires.status === 'ok' ? live.data.fires.items : []
+
+  const mapLabels: MapLabels = {
+    you: t('emergency.you'),
+    locale,
+    hoverNote: t('emergency.mapPopup.hoverNote'),
+    wildfireZoneNote: t('emergency.mapPopup.wildfireZone'),
+    zoneNote: t('emergency.mapPopup.zone'),
+    activeFire: t('emergency.mapPopup.activeFire'),
+    status: t('emergency.mapPopup.status'),
+    statusUnknown: t('emergency.mapPopup.statusUnknown'),
+    contained: (pct) => t('emergency.contained', { pct: String(pct) }),
+    size: t('emergency.mapPopup.size'),
+    acres: (acres) => t('emergency.acres', { acres }),
+    location: t('emergency.mapPopup.location'),
+    away: (km) => t('emergency.away', { distance: formatMiles(km * 1000, locale) }),
+    updated: t('emergency.mapPopup.updated'),
+    source: t('emergency.mapPopup.source'),
+    notReported: t('emergency.mapPopup.notReported'),
+  }
 
   if (!point) {
     return (
@@ -248,18 +316,21 @@ export function EmergencyPanel({ profile }: { profile: UserProfile }) {
             {palette ? (
               <GisMap
                 center={point}
-                zones={data?.zones ?? []}
+                wildfireHazardZones={wildfireHazardZones}
+                otherHazardZones={otherHazardZones}
+                activeWildfires={activeWildfires}
+                fireSource={live.data?.fires.source}
                 facilities={(data?.resources ?? [])
                   .filter((g) => (EMERGENCY_KINDS as readonly string[]).includes(g.kind))
                   .flatMap((g) => g.items.slice(0, 3))}
                 quakes={live.data?.earthquakes.items ?? []}
-                fires={live.data?.fires.items ?? []}
                 palette={palette}
-                labels={{ you: t('emergency.you') }}
+                labels={mapLabels}
               />
             ) : null}
           </div>
-          {palette ? <Legend palette={palette} /> : null}
+          {palette ? <Legend palette={palette} showOtherZones={otherHazardZones.length > 0} /> : null}
+          <ActiveFireStatus live={live} />
         </div>
 
         <div className={cn(card, 'flex flex-col gap-5 p-5 lg:col-span-2')}>

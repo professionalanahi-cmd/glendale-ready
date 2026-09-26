@@ -464,11 +464,32 @@ const es: Dictionary = {
     you: 'Usted está aquí',
     legend: {
       you: 'Su ubicación',
-      zone: 'Zona de peligro mapeada',
+      zone: 'Otra zona de peligro mapeada',
+      wildfireZone: 'Zona de peligro de incendio forestal',
+      wildfireZoneDesc: 'área mapeada, no un incendio actual',
       facility: 'Servicio de emergencia',
       quake: 'Sismo reciente',
       fire: 'Incendio forestal activo',
+      fireDesc: 'incendio reportado actualmente',
     },
+    mapPopup: {
+      wildfireZone:
+        'Esta es una clasificación mapeada de peligro de incendio forestal del SIG de la Ciudad de Glendale. No significa que haya un incendio aquí ahora.',
+      zone: 'Esta es una clasificación de peligro mapeada del SIG de la Ciudad de Glendale. No significa que esté ocurriendo una emergencia ahora.',
+      hoverNote: 'Zona mapeada, no un incendio activo',
+      activeFire: 'Incendio forestal activo',
+      status: 'Estado',
+      statusUnknown: 'Contención no reportada',
+      size: 'Tamaño',
+      location: 'Ubicación',
+      updated: 'Última actualización',
+      source: 'Fuente',
+      notReported: 'No reportado',
+    },
+    legendLabel: 'Leyenda del mapa',
+    noActiveFiresMap: 'No se detectan incendios forestales activos en los datos disponibles.',
+    firesUnavailableMap:
+      'Los datos de incendios en vivo no están disponibles ahora. Las zonas de peligro mapeadas no son incendios activos.',
     atLocation: 'En esta ubicación',
     context: {
       neighborhood: 'Vecindario',
